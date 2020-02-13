@@ -1,0 +1,9 @@
+name = Heimdal PHP Common
+description = Heimdal Login (Adgangsplatformen) Common PHP Module
+core = 7.x
+package = DBC
+
+files[] = includes/heimdalCurl.inc
+files[] = includes/heimdalHelpers.inc
+
+dependencies[] = microcurl
