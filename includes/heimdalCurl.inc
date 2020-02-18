@@ -11,47 +11,13 @@ class HeimdalCurl extends MicroCURL {
 
     /**
     * Do a request for attributes and parse response into an array
-    * @param string $auth_code
-    *   Authorization code from Heimdal
-    * @param array $config
-    *   Service configuration
-    * @return array | bool
-    *   Json response parsed into an array or empty array if
-    *   something goes wrong
-    */
-    public function getAttributes($auth_code, $config) {
-        //exchange authorization code for access token
-        $token = $this->getAccessToken($auth_code, $config);
-        if(empty($token)){
-            return FALSE;
-        }
-
-        $token_as_json = json_decode($token);
-        $bearer = $token_as_json->access_token;
-        // we are logged in - set access_token (bearer) in SESSION for later use
-        $_SESSION['heimdal']['access_token'] = $bearer;
-        $_SESSION['heimdal']['logged_in'] = 1;
-
-        $attributes = $this->getUserInfo($bearer, $config);
-        if ($this->checkMe()) {
-            $attributes = json_decode($attributes, true);
-            if (empty($attributes)) {
-                return array();
-            }
-            return $attributes;
-        }
-        return false;
-    }
-
-    /**
-    * Do a request for attributes and parse response into an array
     * @param string $bearer
     *   User specific access token from Heimdal
     * @param array $config
     *   Service configuration
     * @return string
     */
-    private function getUserInfo($bearer, $config) {
+    public function getUserInfo($bearer, $config) {
         $this->set_url($config['heimdal_client_url'] . 'userinfo/');
         $this->set_option(CURLOPT_HTTPHEADER, array("Authorization: Bearer $bearer"));
         $attributes = $this->get();
@@ -68,7 +34,7 @@ class HeimdalCurl extends MicroCURL {
     *   Service configuration
     * @return string
     */
-    private function getAccessToken($auth_code, $config) {
+    public function getAccessToken($auth_code, $config) {
         $client_id = $config['heimdal_client_id'];
         $client_secret = $config['heimdal_client_secret'];
 
@@ -83,7 +49,7 @@ class HeimdalCurl extends MicroCURL {
 
         $response = $this->get();
 
-        if($this->checkMe()){
+        if($this->checkMe()) {
             return $response;
         }
         return '';
@@ -94,7 +60,7 @@ class HeimdalCurl extends MicroCURL {
     * @param array $curlStatus
     * @return bool
     */
-    private function checkMe() {
+    public function checkMe() {
         $curlStatus = $this->get_status();
         // check for httpcode
         $flag = TRUE;
