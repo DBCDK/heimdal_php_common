@@ -1,0 +1,16 @@
+<?php
+
+/**
+* Provide functionality for retrieving logindata from the hjemdal client
+* Handle data from:
+*   FORS Login (netpunkt login)
+*   Library login - userid/cpr from the users local library
+*   NemId - cpr/userid
+*   Wayf - wayfid
+* And agency data known for the user
+*
+* Setup for hjemdal client is handled in SMAUG ADMIN -
+* urls, attributes, displayname, services and identityProviders
+*/
+
+// This space intentionally left blank.
