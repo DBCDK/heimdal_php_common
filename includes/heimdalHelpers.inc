@@ -41,7 +41,7 @@ class HeimdalHelpers {
             $redirect = '&redirect_uri=' . $redirect_url;
         }
         if ($access_platform) {
-            $heimdal_url .= $config['heimdal_client_url'] . 'oauth/authorize?response_type=code&client_id=' . $config['heimdal_client_id'] . $redirect;
+            $heimdal_url .= $config['heimdal_client_url'] . 'oauth/authorize?response_type=code&client_id=' . $config['heimdal_client_id'] . $redirect . '&idp=netpunkt';
         }
 
         return $heimdal_url;
