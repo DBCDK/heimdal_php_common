@@ -129,20 +129,4 @@ class HeimdalHelpers {
       $path = base_path();
       return $protocol . $host . $path . $relative_path;
     }
-
-    private function heimdal_convert_fr_2_idp($data) {
-      $return_data = new stdClass();
-
-      $object = new stdClass();
-      $object->productName = "";
-      $object->name = "READ";
-      $object->description = "";
-
-      if (isset($data['emneord'])) {
-        $emneord = $object;
-        $emneord->productName = "EMNEORD";
-        $return_data->rights[] = $emneord;
-      }
-      return $return_data;
-    }
 }
