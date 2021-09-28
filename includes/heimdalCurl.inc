@@ -18,11 +18,32 @@ class HeimdalCurl extends MicroCURL {
     * @return string
     */
     public function getUserInfo($bearer, $config) {
-        $this->set_url($config['heimdal_client_url'] . 'userinfo/');
-        $this->set_option(CURLOPT_HTTPHEADER, array("Authorization: Bearer $bearer"));
-        $attributes = $this->get();
+      $this->set_url($config['heimdal_client_url'] . 'userinfo/');
+      $this->set_option(CURLOPT_HTTPHEADER, array("Authorization: Bearer $bearer"));
 
-        return $attributes;
+      $attributes = $this->get();
+
+      /* THIS IS TEMPORARY UNTIL HEIMDAL HAS REPLACED FORS WITH IDP */
+      $decoded_att = json_decode($attributes);
+
+      if (isset($decoded_att->attributes)) {
+        if (!isset($decoded_att->attributes->dbcidp)) {
+          // DBCIDP is not present, we need to call IDP to get the rights
+          $rights = idp_autorize_token('netpunkt', $bearer);
+          if (isset($decoded_att->attributes->forsrights)) {
+            unset($decoded_att->attributes->forsrights);
+          }
+          if (isset($rights['rights'])) {
+            $decoded_att->attributes->dbcidp[0]->rights = $rights;
+          }
+        } else {
+          if (isset($decoded_att->attributes->forsrights)) {
+            unset($decoded_att->attributes->forsrights);
+          }
+        }
+      }
+      /* END OF: THIS IS TEMPORARY UNTIL HEIMDAL HAS REPLACED FORS WITH IDP */
+      return json_encode($decoded_att);
     }
 
     /**
@@ -49,15 +70,11 @@ class HeimdalCurl extends MicroCURL {
 
         $response = $this->get();
 
-        if($this->checkMe()) {
-            return $response;
-        }
-        return '';
+        return ($this->checkMe()) ? $response : '';
     }
 
     /**
     * Check status of given status array from parent class (@see MicroCURL::get_status()).
-    * @param array $curlStatus
     * @return bool
     */
     public function checkMe() {
