@@ -23,26 +23,8 @@ class HeimdalCurl extends MicroCURL {
 
       $attributes = $this->get();
 
-      /* THIS IS TEMPORARY UNTIL HEIMDAL HAS REPLACED FORS WITH IDP */
       $decoded_att = json_decode($attributes);
 
-      if (isset($decoded_att->attributes)) {
-        if (!isset($decoded_att->attributes->dbcidp)) {
-          // DBCIDP is not present, we need to call IDP to get the rights
-          $rights = idp_autorize_token('netpunkt', $bearer);
-          if (isset($decoded_att->attributes->forsrights)) {
-            unset($decoded_att->attributes->forsrights);
-          }
-          if (isset($rights['rights'])) {
-            $decoded_att->attributes->dbcidp[0]->rights = $rights;
-          }
-        } else {
-          if (isset($decoded_att->attributes->forsrights)) {
-            unset($decoded_att->attributes->forsrights);
-          }
-        }
-      }
-      /* END OF: THIS IS TEMPORARY UNTIL HEIMDAL HAS REPLACED FORS WITH IDP */
       return json_encode($decoded_att);
     }
 
