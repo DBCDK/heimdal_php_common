@@ -31,7 +31,7 @@ class HeimdalHelpers {
     * Get the url for heimdal login
     * @return string
     */
-    public function heimdal_get_login_url($relative_path = '') {
+    public function heimdal_get_login_url($relative_path = '', $idp = "dbcidp") {
       $config = $this->getConfig();
       $redirect_url = HeimdalHelpers::heimdal_get_full_url($relative_path);
       $access_platform = $config['heimdal_client_url'] ?? FALSE;
@@ -41,7 +41,7 @@ class HeimdalHelpers {
         $redirect = '&redirect_uri=' . $redirect_url;
       }
       if ($access_platform) {
-        $heimdal_url .= $config['heimdal_client_url'] . 'oauth/authorize?response_type=code&client_id=' . $config['heimdal_client_id'] . $redirect . '&idp=dbcidp';
+        $heimdal_url .= $config['heimdal_client_url'] . 'oauth/authorize?response_type=code&client_id=' . $config['heimdal_client_id'] . $redirect . '&idp=' . $idp;
       }
 
       return $heimdal_url;
